@@ -1,0 +1,67 @@
+import os
+import streamlit as st
+import pandas as pd
+import joblib
+
+# Load the model committed by the pipeline (sits next to this file)
+model_path = os.path.join(os.path.dirname(__file__), "best_tourism_model_v1.joblib")   # complete the code: filename of the trained model saved by train.py (must match the filename you used there)
+model = joblib.load(model_path)
+
+# Streamlit UI for Tourism Package Prediction
+st.title("Tourism Package Prediction")
+st.write("Fill the customer details below to predict if they'll purchase a travel package")
+
+# Collect user input
+Age = st.slider("Age", 18, 70, 30)
+TypeofContact = st.selectbox("Type of Contact", ["Self Enquiry", "Company Invited"])
+CityTier = st.selectbox("City Tier", [1, 2, 3])
+DurationOfPitch = st.slider("Duration of Pitch (mins)", 0, 130, 15)
+Occupation = st.selectbox("Occupation", ["Salaried", "Small Business", "Large Business", "Free Lancer"])
+Gender = st.selectbox("Gender", ["Male", "Female"])
+NumberOfPersonVisiting = st.slider("Number of Persons Visiting", 1, 5, 2)
+NumberOfFollowups = st.slider("Number of Follow-ups", 1, 10, 3)
+ProductPitched = st.selectbox("Product Pitched", ["Basic", "Standard", "Deluxe", "Super Deluxe", "King"])
+PreferredPropertyStar = st.selectbox("Preferred Property Star", [1, 2, 3, 4, 5])
+MaritalStatus = st.selectbox("Marital Status", ["Married", "Single", "Divorced", "Unmarried"])
+NumberOfTrips = st.slider("Number of Trips", 1, 25, 3)
+Passport = st.selectbox("Has Passport?", ["Yes", "No"])
+PitchSatisfactionScore = st.slider("Pitch Satisfaction Score", 1, 5, 3)
+OwnCar = st.selectbox("Owns a Car?", ["Yes", "No"])
+NumberOfChildrenVisiting = st.slider("Number of Children Visited", 0, 5, 1)
+Designation = st.selectbox("Designation", ["Executive", "Manager", "AVP", "VP", "Senior Manager"])
+MonthlyIncome = st.number_input("Monthly Income", min_value=1000.0, value=100000.0)
+
+# ----------------------------
+# Prepare input data
+# ----------------------------
+input_data = pd.DataFrame([{
+    'Age': float(Age),
+    'TypeofContact': str(TypeofContact),
+    'CityTier': str(CityTier),
+    'DurationOfPitch': float(DurationOfPitch),
+    'Occupation': str(Occupation),
+    'Gender': str(Gender),
+    'NumberOfPersonVisiting': int(NumberOfPersonVisiting),
+    'NumberOfFollowups': float(NumberOfFollowups),
+    'ProductPitched': str(ProductPitched),
+    'PreferredPropertyStar': float(PreferredPropertyStar),
+    'MaritalStatus': str(MaritalStatus),
+    'NumberOfTrips': float(NumberOfTrips),
+    'Passport': int(1 if Passport == "Yes" else 0),
+    'PitchSatisfactionScore': int(PitchSatisfactionScore),
+    'OwnCar': int(1 if OwnCar == "Yes" else 0),
+    'NumberOfChildrenVisiting': float(NumberOfChildrenVisiting),
+    'Designation': str(Designation),
+    'MonthlyIncome': float(MonthlyIncome)
+}])
+
+
+# Set the classification threshold
+classification_threshold = 0.3
+
+# Predict button
+if st.button("Predict"):
+    prob = model.predict_proba(input_data)[0,1]
+    pred = int(prob >= classification_threshold)
+    result = "will purchase the travel package" if pred == 1 else "is unlikely to purchase"
+    st.write(f"Prediction: Customer {result}")
