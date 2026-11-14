@@ -29,11 +29,11 @@ Xtrain["OwnCar"] = Xtrain["OwnCar"].astype(str)
 Xtest["OwnCar"]  = Xtest["OwnCar"].astype(str)
 
 # One-hot encode 'Type' and scale numeric features
-numeric_features = ['Age', 'DurationOfPitch', 'NumberOfPersonVisiting', 
-                    'NumberOfFollowups', 'PreferredPropertyStar', 
-                    'NumberOfTrips', 'PitchSatisfactionScore', 
+numeric_features = ['Age', 'DurationOfPitch', 'NumberOfPersonVisiting',
+                    'NumberOfFollowups', 'PreferredPropertyStar',
+                    'NumberOfTrips', 'PitchSatisfactionScore',
                     'NumberOfChildrenVisiting', 'MonthlyIncome']
-binary_features = ['Passport','OwnCar'] 
+binary_features = ['Passport','OwnCar']
 categorical_features = ['TypeofContact', 'CityTier', 'Occupation', 'Gender',
                         'ProductPitched', 'MaritalStatus', 'Designation']
 
@@ -60,8 +60,6 @@ param_grid = {
     'xgbclassifier__colsample_bytree': [0.9, 1.0],    # Fraction of features sampled when building each tree.
     'xgbclassifier__colsample_bylevel': [0.7, 1.0],   # Fraction of features sampled at each tree level.
 }
-
-
 
 # Model pipeline
 model_pipeline = make_pipeline(preprocessor, xgb_model)
